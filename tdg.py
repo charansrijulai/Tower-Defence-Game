@@ -17,10 +17,12 @@ path_row = 5
 towers, enemies = {}, []
 selected_tower, wave_number = None, 1
 player_pos = [0, 0]
-start_time = time.time()
+start_time = None
 enemy_count, max_enemies = 0, 10
 enemy_speed = 20
 running = True
+allow_tower_placement = True
+game_started = False
 
 def draw_grid():
     for row in range(rows):
@@ -36,10 +38,13 @@ def draw_ui():
     font = pygame.font.SysFont(None, 36)
     screen.blit(font.render(f'Selected Tower: {selected_tower if selected_tower else "None"}', True, BLACK), (10, rows*cell_size+10))
     screen.blit(font.render(f'Wave: {wave_number}', True, BLACK), (300, rows*cell_size+10))
-    screen.blit(font.render(f'Time: {int(time.time()-start_time)}', True, BLACK), (500, rows*cell_size+10))
+    if game_started:
+        screen.blit(font.render(f'Time: {int(time.time()-start_time)}', True, BLACK), (500, rows*cell_size+10))
 
 def handle_input(event):
     global selected_tower
+    global allow_tower_placement, game_started
+    global start_time
     if event.type == pygame.KEYDOWN:
         if event.unicode in '123456':
             selected_tower = int(event.unicode)
@@ -51,8 +56,12 @@ def handle_input(event):
             player_pos[0] -= 1
         elif event.key == pygame.K_d and player_pos[0] < cols - 1:
             player_pos[0] += 1
-        elif event.key == pygame.K_p and selected_tower and tuple(player_pos) not in towers and player_pos[1] != path_row:
+        elif event.key == pygame.K_p and selected_tower and tuple(player_pos) not in towers and player_pos[1] != path_row and allow_tower_placement:
             towers[tuple(player_pos)] = tower_colors[selected_tower - 1]
+        elif event.key == pygame.K_v:
+            allow_tower_placement = False
+            game_started = True
+            start_time = time.time()
 
 last_move_time = 0  # Track last movement update
 
@@ -82,7 +91,8 @@ while running:
     screen.fill(WHITE)
     draw_grid()
     draw_ui()
-    update_enemies()
+    if game_started:
+        update_enemies()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
