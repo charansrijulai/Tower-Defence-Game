@@ -8,7 +8,7 @@ This project aims to develop an RL (Reinforcement Learning) agent that efficient
 
 - **Objective:** Protect your territory by preventing enemy attackers from reaching your base or exit points.
 - **Gameplay:**  
-  - Strategically place and upgrade defensive towers along enemy paths.
+  - Strategically place the defensive towers along enemy paths.
   - Earn money by defeating enemies, which is used to purchase and upgrade towers.
 - **Winning Condition:**  
   - Successfully defend against all waves of attackers.
