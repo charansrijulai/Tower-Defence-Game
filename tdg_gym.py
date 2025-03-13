@@ -44,18 +44,67 @@ class TowerDefenseEnv(gym.Env):
     
     def __init__(self):
         super(TowerDefenseEnv, self).__init__()
-        pygame.init()
-        self.screen = pygame.display.set_mode((width, height))
-        pygame.display.set_caption('Tower Defense - Gym Env')
+        # pygame.init()
+        # self.screen = pygame.display.set_mode((width, height))
+        # pygame.display.set_caption('Tower Defense - Gym Env')
+        # self.width, self.height = 800, 450
+        self.rows, self.cols = 10, 25
+        self.path_row = 5
+        self.max_waves = 10  # Total number of waves in the game
+        self.tower_info = {
+            0: {'color': (255, 0, 0),   'health': 10, 'damage': 1, 'range': 1, 'cost': 10},
+            1: {'color': (0, 255, 0),   'health': 20, 'damage': 2, 'range': 2, 'cost': 15},
+            2: {'color': (0, 0, 255),   'health': 30, 'damage': 3, 'range': 3, 'cost': 20},
+            3: {'color': (255, 255, 0), 'health': 40, 'damage': 4, 'range': 4, 'cost': 25},
+            4: {'color': (255, 165, 0), 'health': 50, 'damage': 5, 'range': 5, 'cost': 30},
+            5: {'color': (128, 0, 128), 'health': 60, 'damage': 6, 'range': 6, 'cost': 35}
+        }
+        self.enemy_info = {
+            0: {'color': (0, 128, 128), 'health': 10, 'damage': 1, 'range': 1},
+            1: {'color': (128, 0, 0),   'health': 20, 'damage': 2, 'range': 2},
+            2: {'color': (0, 128, 0),   'health': 30, 'damage': 3, 'range': 3},
+            3: {'color': (128, 128, 0), 'health': 40, 'damage': 4, 'range': 4},
+            4: {'color': (0, 0, 128),   'health': 50, 'damage': 5, 'range': 5},
+            5: {'color': (128, 0, 128), 'health': 60, 'damage': 6, 'range': 6}
+        }
+        self.rewards = {
+            'tower_placed_success': 10,
+            'tower_placed_fail_insuffienct_coins': -10,
+            'tower_placed_fail_placement_on_path': -10,
+            'wave_won': 1000,
+            'wave_lost': -1000,
+        }
+        self.actions = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'TOWER_1', 'TOWER_2', 'TOWER_3', 'TOWER_4', 'TOWER_5', 'TOWER_6',
+                        'PLACE_TOWER', 'START_WAVE']
+        self.action_space = spaces.Discrete(len(self.actions))
+
+        obs_space_dict = {
+            'current_position': spaces.Tuple((spaces.Discrete(self.rows), spaces.Discrete(self.cols))),
+            'current_selected_tower': spaces.Discrete(len(self.tower_info)),
+            'remaining_coins': spaces.Discrete(np.inf)  # None is not directly representable, so we use Discrete(len(tower_info))
+            # 'player_position': spaces.Tuple((spaces.Discrete(self.grid_size), spaces.Discrete(self.grid_size))),
+            # 'player_health': spaces.Discrete(len(self.health_states)),
+            # 'guard_positions': spaces.Dict({
+            #     guard: spaces.Tuple((spaces.Discrete(self.grid_size), spaces.Discrete(self.grid_size)))
+            #     for guard in self.guards
+            # })
+        }
+        self.observation_space = spaces.Dict(obs_space_dict)
+
+        # Set initial state
+        # self.reset()
         
         # Observation: grid image (rows x cols x 3 RGB)
-        self.observation_space = spaces.Box(low=0, high=255, shape=(rows, cols, 3), dtype=np.uint8)
+        # self.observation_space = spaces.Box(low=0, high=255, shape=(rows, cols, 3), dtype=np.uint8)
         # Action space: Discrete actions: 
         # 0: up, 1: down, 2: left, 3: right, 4: place tower, 5: start wave
-        self.action_space = spaces.Discrete(6)
+        # self.action_space = spaces.Discrete(6)
         
         self.clock = pygame.time.Clock()
         self.reset()
+
+    # def is_valid_position_to_place(self, position):
+    #     pass
         
     def reset(self):
         self.towers = {}           # Towers stored by (col, row): {'type': int, 'health': int}
@@ -72,19 +121,37 @@ class TowerDefenseEnv(gym.Env):
         self.enemy_won = False     # Flag to indicate enemy reached end.
         self.agent_won = False     # Flag to indicate agent survived all waves.
         self.start_time = None     # Time when wave starts
-        self.last_spawn_time = None  # For enemy spawn timing
-        self.last_update_time = time.time()  # For dt calculation
-        return self._get_observation()
+        # self.last_spawn_time = None  # For enemy spawn timing
+        # self.last_update_time = time.time()  # For dt calculation
+        self.current_state = {
+            'current_position': (0, 0),
+            'current_selected_tower': None,
+            'remaining_coins': 100
+        }
+        # Return obs, rew, done, info
+        return self._get_observation(), 0, False, {}
     
     def _get_observation(self):
-        obs = np.zeros((rows, cols, 3), dtype=np.uint8)
-        for r in range(rows):
-            for c in range(cols):
-                if (c, r) in self.towers:
-                    obs[r, c] = np.array(tower_info[self.towers[(c, r)]['type']]['color'])
-                else:
-                    obs[r, c] = np.array(GREY if r == path_row else GREEN)
+        # obs = np.zeros((rows, cols, 3), dtype=np.uint8)
+        # for r in range(rows):
+        #     for c in range(cols):
+        #         if (c, r) in self.towers:
+        #             obs[r, c] = np.array(tower_info[self.towers[(c, r)]['type']]['color'])
+        #         else:
+        #             obs[r, c] = np.array(GREY if r == path_row else GREEN)
+        obs = {
+            'current_position': self.current_state['current_position'],
+            'current_selected_tower': self.current_state['current_selected_tower'],
+            'remaining_coins': self.current_state['remaining_coins']
+        }
         return obs
+    
+    def is_terminal(self):
+        if self.wave_number == max_waves:
+            return True
+        elif self.game_over:
+            return True
+        return False
     
     def step(self, action):
         reward = 0
