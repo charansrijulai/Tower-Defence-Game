@@ -2,10 +2,21 @@ from test_gym_new import TowerDefenseEnv
 import numpy as np
 import random
 import pickle
+import torch
+from QNetwork import QNetwork
 
 class GameController:
-    def __init__(self):
+    def __init__(self, algo='ql'):
+        self.algo_used = algo
         self.env = TowerDefenseEnv()
+
+        # self.dqn_model = None
+        if algo == 'dqn':
+            action_space = self.env.action_space.n
+            model = QNetwork(3, action_space)
+            model.load_state_dict(torch.load('../train/dqn_tower_defense_model.pth'))
+            self.dqn_model = model
+        
         self.current_observation, _, _, _ = self.env.reset()
 
         # Q-Learning setup
@@ -48,6 +59,9 @@ class GameController:
         return x * (7 * 3) + y * 3 + h
 
     def q_learning_step(self):
+        if self.algo_used == 'dqn':
+            return self.dqn_step()
+        # print('check')
         # state = self.encode_state()
         # action = self.choose_action(state)
         # Print the chosen action (as index) and grid coordinates:
@@ -67,6 +81,14 @@ class GameController:
         # self.q_table[state][action] += self.alpha * td_error
 
         # return state, action, reward, next_state, best_next_action
+        return action
+    
+    def dqn_step(self):
+        obs = self.env.get_observation()
+        state = np.array([obs['current_position'][0], obs['current_position'][1], obs['current_selected_tower']])
+        state = torch.tensor(state, dtype=torch.float32)
+        q_values = self.dqn_model(state.unsqueeze(0))
+        action = torch.argmax(q_values).item()
         return action
 
     def reset(self):
