@@ -29,8 +29,8 @@ enemy_move_time = time.time()
 # Towers and enemies
 tower_images = {
     1: pygame.image.load("../images/watchtower.png").convert_alpha(),
-    2: pygame.image.load("../images/watchtower.png").convert_alpha(),
-    3: pygame.image.load("../images/watchtower.png").convert_alpha()
+    2: pygame.image.load("../images/watchtower_lvl2.png").convert_alpha(),
+    3: pygame.image.load("../images/watchtower_lvl3.png").convert_alpha()
 }
 enemy_images = {
     0: pygame.image.load("../images/goblinsword.png").convert_alpha(),
