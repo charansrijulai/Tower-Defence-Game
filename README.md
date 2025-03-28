@@ -43,3 +43,30 @@ This project aims to develop an RL (Reinforcement Learning) agent that efficient
 - **Soft Deliverables:**  
   - A simple, functional UI.
   - A working RL agent capable of playing the Tower Defense game.
+
+## Assets Attribution
+
+- Goblin sprite by William.Thompsonj and Redshrike  
+  - Source: [LPC Goblin](https://opengameart.org/content/lpc-goblin)  
+  - License: [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+
+- Guard Tower sprite by Blarumyrran  
+  - Source: [Medieval Stone Guard Tower (isometric 2.5D)](https://opengameart.org/content/medieval-stone-guard-tower-isometric-25d)  
+  - License: [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+
+- Orc sprite by wulax  
+  - Source: [Orc Static 64x64](https://opengameart.org/content/orc-static-64x64)  
+  - License: [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+
+- Grass tile by ansimuz  
+  - Source: [Grass Tile 0](https://opengameart.org/content/grass-tile-0)  
+  - License: [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+
+- Cobblestone tile by Bleed  
+  - Source: [Cobblestone Tile](https://opengameart.org/content/cobblestone-tile)  
+  - License: [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+
+- Watchtower Level 2 and Level 3 sprites generated with the assistance of ChatGPT (March 2025 version) by OpenAI  
+  - Source: Generated via prompt-based image assistance in ChatGPT  
+  - License: Used with permission under OpenAI’s terms for generated content
+
