@@ -4,7 +4,7 @@ import torch.optim as optim
 import numpy as np
 import random
 from collections import deque
-from test_gym_new import TowerDefenseEnv
+from test_gym_train import TowerDefenseEnv
 import time
 
 # Hyperparameters
