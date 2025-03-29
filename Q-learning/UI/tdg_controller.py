@@ -23,7 +23,8 @@ class GameController:
         self.num_states = 1000  # Simplified state count
         self.num_actions = self.env.rows * self.env.cols  # One action per grid cell (tower placement)
         try:
-            with open('../train/Q_table_winning_train_a_lot.pickle', 'rb') as f:
+            # with open('../train/Q_table_winning_train_a_lot.pickle', 'rb') as f:
+            with open('../train/Q_table.pickle', 'rb') as f:
                 self.q_table = pickle.load(f)
             print("Loaded trained Q table successfully!")
         except Exception as e:

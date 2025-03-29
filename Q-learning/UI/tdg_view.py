@@ -3,8 +3,8 @@ import sys
 import time
 from tdg_controller import GameController
 
-game = GameController('dqn')
-# game = GameController()
+# game = GameController('dqn')
+game = GameController()
 observation = game.reset()
 
 data = game.get_game_data()
