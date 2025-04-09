@@ -4,7 +4,7 @@ import torch.optim as optim
 import numpy as np
 import random
 from collections import deque
-from test_gym_new import TowerDefenseEnv
+from test_gym_train import TowerDefenseEnv
 import time
 
 # Hyperparameters
@@ -19,6 +19,7 @@ num_episodes = 10000
 target_update_freq = 500  # Frequency of target network update
 max_memory = 10000  # Max size of experience replay buffer
 
+
 # Build the Neural Network for Q-value approximation
 class QNetwork(nn.Module):
     def __init__(self, observation_space, action_space, internal_nodes=128):
@@ -31,6 +32,7 @@ class QNetwork(nn.Module):
         x = torch.relu(self.dense1(state))
         x = torch.relu(self.dense2(x))
         return self.q_values(x)
+
 
 # Experience Replay Buffer
 class ReplayBuffer:
@@ -45,6 +47,7 @@ class ReplayBuffer:
 
     def size(self):
         return len(self.buffer)
+
 
 # Train the model
 def train_step(model, target_model, batch, optimizer):
@@ -87,6 +90,7 @@ def train_step(model, target_model, batch, optimizer):
     optimizer.step()
     return loss.item()
 
+
 # Main training loop
 def dqn():
     global epsilon
@@ -108,7 +112,7 @@ def dqn():
     print(f"Target Update Frequency: {target_update_freq}")
     print(f"Max Memory: {max_memory}")
     print("Starting DQN training...")
-    
+
     env = TowerDefenseEnv()
 
     # Initialize the Q-network and target Q-network
@@ -127,10 +131,20 @@ def dqn():
 
     total_rewards = []
 
+    temp_dict = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+    }
+
     for episode in range(num_episodes):
         # print(f"Episode {episode} - START")
         if episode % 100 == 0:
             print(f"Episode {episode} - DONE")
+            print(temp_dict)
         obs, reward, done, info = env.reset()
         # print(type(obs['current_position']))
         # print(type([obs['current_selected_tower']]))
@@ -150,7 +164,8 @@ def dqn():
 
             # Take action and observe next state
             next_obs, reward, done, info = env.step(action)
-            next_state = np.array([next_obs['current_position'][0], next_obs['current_position'][1], next_obs['current_selected_tower']])
+            next_state = np.array(
+                [next_obs['current_position'][0], next_obs['current_position'][1], next_obs['current_selected_tower']])
             next_state = torch.tensor(next_state, dtype=torch.float32)
 
             # Store the experience in the replay buffer
@@ -163,6 +178,8 @@ def dqn():
 
             state = next_state
             total_reward += reward
+
+        temp_dict[env.current_wave] += 1
 
         # Update the epsilon (decay epsilon for exploration)
         if epsilon > min_epsilon:
@@ -179,6 +196,7 @@ def dqn():
         #     print(f"Episode {episode}, Total Reward: {total_reward}")
 
     return model
+
 
 # Testing the trained model
 def test_model():
@@ -201,7 +219,8 @@ def test_model():
             action = torch.argmax(q_values).item()
         next_obs, reward, done, info = env.step(action)
         print(f'Observation: {next_obs}, Action: {action}, Reward: {reward}, Done: {done}, Info: {info}')
-        state = np.array([next_obs['current_position'][0], next_obs['current_position'][1], next_obs['current_selected_tower']])
+        state = np.array(
+            [next_obs['current_position'][0], next_obs['current_position'][1], next_obs['current_selected_tower']])
         state = torch.tensor(state, dtype=torch.float32)
         total_reward += reward
 
@@ -209,12 +228,13 @@ def test_model():
     print("Final wave:", env.current_wave)
     env.close()
 
-is_train = False
+
+is_train = True
 if is_train:
     # Training the DQN model
     model = dqn()
     # Saving the trained model
-    torch.save(model.state_dict(), "dqn_tower_defense_model.pth")
+    torch.save(model.state_dict(), "dqn_tower_defense_model_test.pth")
 else:
     # Test the trained model
     test_model()
