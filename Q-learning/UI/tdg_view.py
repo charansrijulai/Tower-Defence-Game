@@ -206,7 +206,7 @@ def refresh():
 
 clock = pygame.time.Clock()
 running = True
-agent_mode = True  # Set to True to activate Q-learning agent
+agent_mode = False  # Set to True to activate Q-learning agent
 agent_timer = 0
 
 while running:

@@ -168,7 +168,7 @@ def draw_grid():
         range_radius = tower_info[selected_tower]['range'] * cell_size
         center_x = player_pos[1] * cell_size + cell_size // 2
         center_y = player_pos[0] * cell_size + cell_size // 2
-        pygame.draw.circle(screen, (0, 0, 255), (center_x, center_y), range_radius, 2)
+        pygame.draw.circle(screen, (255, 215, 0), (center_x, center_y), range_radius, 2)
 
     for proj in projectiles:
         proj.update()
@@ -180,23 +180,56 @@ def draw_grid():
         ep.draw()
     enemy_projectiles[:] = [ep for ep in enemy_projectiles if ep.active]
 
+
 def draw_ui():
-    font = pygame.font.SysFont(None, 24)
     data = game.get_game_data()
+    ui_top = rows * cell_size
+    ui_height = 200
+
+    panel_color = (245, 245, 245)
+    pygame.draw.rect(screen, panel_color, (0, ui_top, window_width, ui_height))
+
+    title_font = pygame.font.SysFont("arial", 28, bold=True)
+    label_font = pygame.font.SysFont("arial", 22)
+    value_font = pygame.font.SysFont("arial", 22, bold=True)
+    small_font = pygame.font.SysFont("arial", 18)
+
+    def draw_label_value(label, value, x, y):
+        label_surface = label_font.render(label, True, (50, 50, 50))
+        value_surface = value_font.render(str(value), True, (0, 102, 204))
+        screen.blit(label_surface, (x, y))
+        screen.blit(value_surface, (x + 180, y))
+
+    x_pad = 20
+    y_pad = ui_top + 10
+    line_gap = 26
+
     if data["game_over"] or data["current_wave"] > game.env.max_waves:
-        msg = "GAME WON" if data["current_wave"] > game.env.max_waves else "GAME OVER"
-        screen.blit(font.render(msg, True, (255, 0, 0)), (10, rows * cell_size + 10))
+        msg = "🎉 GAME WON!" if data["current_wave"] > game.env.max_waves else "☠ GAME OVER"
+        text = title_font.render(msg, True, (200, 0, 0))
+        screen.blit(text, (window_width // 2 - 100, y_pad + 20))
         return
-    ui = [
-        f"Selected Tower: {selected_tower}",
-        f"Wave: {data['current_wave']}",
-        f"Coins: {data['coins']}",
-        f"Towers placed: {len(data['towers'])}"
+
+    # Info
+    draw_label_value("Selected Tower:", selected_tower, x_pad, y_pad)
+    draw_label_value("Wave:", f"{data['current_wave']} / {game.env.max_waves}", x_pad, y_pad + line_gap)
+    draw_label_value("Coins:", data['coins'], x_pad, y_pad + 2 * line_gap)
+    draw_label_value("Towers placed:", len(data['towers']), x_pad, y_pad + 3 * line_gap)
+
+    # Controls
+    control_x = window_width // 2 + 50
+    control_y = y_pad
+    screen.blit(label_font.render("🎮 Controls", True, (60, 60, 60)), (control_x, control_y))
+
+    controls = [
+        "W / A / S / D  : Move Cursor",
+        "1 / 2 / 3      : Select Tower",
+        "P              : Place Tower",
+        "V              : Start Wave",
     ]
-    ui.append("Available: " + ",".join(str(t) for t in data["available_towers"]))
-    ui.append("Locked: " + ",".join(str(t) for t in range(1, 4) if t not in data["available_towers"]))
-    for i, line in enumerate(ui):
-        screen.blit(font.render(line, True, BLACK), (10, rows * cell_size + 10 + i * 20))
+    for i, line in enumerate(controls):
+        screen.blit(small_font.render(line, True, (30, 30, 30)), (control_x, control_y + 25 + i * 20))
+
 
 # Game refresh
 def refresh():
