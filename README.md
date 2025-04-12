@@ -1,6 +1,6 @@
 # Tower Defense RL Agent Project
 
-![Final UI](../Tower-Defence-Game/Q-learning/assets/v3.gif)  
+![Final UI](/assets/v3.gif)  
 *The latest version of the Tower Defense game UI with integrated RL agent and full gameplay flow.*
 
 ## Overview
@@ -38,15 +38,15 @@ This project aims to develop an RL (Reinforcement Learning) agent that efficient
 ## UI Evolution
 
 ### Version 1 – Basic Layout
-![UI v1](../Tower-Defence-Game/Q-learning/assets/v1.png)  
+![UI v1](/assets/v1.png)  
 *Simple 25*10  grid-based board with basic tower/enemy placing using colored cells.*
 
 ### Version 2 – Enhanced Visuals & Logic
-![UI v2](../Tower-Defence-Game/Q-learning/assets/v2.gif)  
+![UI v2](/assets/v2.gif)  
 *Introduced sprites, improved health bar logic, and better enemy animations.*
 
 ### Version 3 – RL Integration + Game Polish
-![UI v3](../Tower-Defence-Game/Q-learning/assets/v3.gif)  
+![UI v3](/assets/v3.gif)  
 *Full integration of RL agent logic, cursor dynamics during waves, tower range animations, and overall polish.*
 
 ## Project Roadmap
