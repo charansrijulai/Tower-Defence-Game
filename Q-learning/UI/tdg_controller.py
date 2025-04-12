@@ -6,7 +6,7 @@ import torch
 from QNetwork import QNetwork
 
 class GameController:
-    def __init__(self, algo='ql'):
+    def __init__(self, algo='dqn'):
         self.algo_used = algo
         self.env = TowerDefenseEnv()
 

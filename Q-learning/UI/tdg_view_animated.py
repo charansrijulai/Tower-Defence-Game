@@ -4,7 +4,7 @@ import time
 from tdg_controller import GameController
 
 # Setup
-game = GameController()
+game = GameController(algo='dqn')
 observation = game.reset()
 data = game.get_game_data()
 rows, cols = data["rows"], data["cols"]
@@ -205,7 +205,7 @@ def draw_ui():
     line_gap = 26
 
     if data["game_over"] or data["current_wave"] > game.env.max_waves:
-        msg = "🎉 GAME WON!" if data["current_wave"] > game.env.max_waves else "☠ GAME OVER"
+        msg = "GAME WON!!" if data["current_wave"] > game.env.max_waves else "GAME OVER !!"
         text = title_font.render(msg, True, (200, 0, 0))
         screen.blit(text, (window_width // 2 - 100, y_pad + 20))
         return
@@ -219,7 +219,7 @@ def draw_ui():
     # Controls
     control_x = window_width // 2 + 50
     control_y = y_pad
-    screen.blit(label_font.render("🎮 Controls", True, (60, 60, 60)), (control_x, control_y))
+    screen.blit(label_font.render("Controls", True, (60, 60, 60)), (control_x, control_y))
 
     controls = [
         "W / A / S / D  : Move Cursor",
@@ -300,7 +300,7 @@ def process_key(event):
 # Main loop
 clock = pygame.time.Clock()
 running = True
-agent_mode = False
+agent_mode = True
 agent_timer = 0
 
 while running:
@@ -317,7 +317,7 @@ while running:
             agent_timer = 0
 
     refresh()
-    clock.tick(30)
+    clock.tick(60)
 
 pygame.quit()
 sys.exit()
