@@ -39,11 +39,11 @@ This project aims to develop an RL (Reinforcement Learning) agent that efficient
 
 ### Version 1 – Basic Layout
 ![UI v1](/assets/v1.png)  
-*Simple 25*10  grid-based board with basic tower/enemy placing using colored cells.*
+*Simple `25×10`  grid-based board with basic tower/enemy placing using colored cells.*
 
 ### Version 2 – Enhanced Visuals & Logic
 ![UI v2](/assets/v2.gif)  
-*Introduced sprites, improved health bar logic, and better enemy animations.*
+*Introduced sprites, improved health bar logic, and better enemy animations. Grid size is `7×7`*
 
 ### Version 3 – RL Integration + Game Polish
 ![UI v3](/assets/v3.gif)  
