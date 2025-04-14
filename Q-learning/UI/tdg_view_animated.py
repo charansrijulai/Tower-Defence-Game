@@ -4,7 +4,7 @@ import time
 from tdg_controller import GameController
 
 # Setup
-game = GameController(algo='dqn')
+game = GameController(algo='ql')
 observation = game.reset()
 data = game.get_game_data()
 rows, cols = data["rows"], data["cols"]
@@ -300,7 +300,7 @@ def process_key(event):
 # Main loop
 clock = pygame.time.Clock()
 running = True
-agent_mode = True
+agent_mode = False
 agent_timer = 0
 
 while running:
