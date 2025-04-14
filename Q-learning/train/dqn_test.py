@@ -209,7 +209,7 @@ def test_model():
     print("Final wave:", env.current_wave)
     env.close()
 
-is_train = True
+is_train = False
 if is_train:
     # Training the DQN model
     model = dqn()
