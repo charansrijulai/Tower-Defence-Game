@@ -158,7 +158,7 @@ class TowerDefenseEnv(gym.Env):
 
     def place_tower(self):
         # print("[ENV DEBUG] place_tower called. Player position:", self.player_pos, "Coins:", self.coins)
-        if np.random.rand() < 0.1 and self.current_wave > 1:
+        if np.random.rand() < 0.5 and self.current_wave > 1:
             self.switch_tower()
         pos = tuple(self.player_pos)
         if pos in self.towers:
