@@ -1,5 +1,8 @@
 # Tower Defense RL Agent Project
 
+![Final UI](/assets/v3.gif)  
+*The latest version of the Tower Defense game UI with integrated RL agent and full gameplay flow.*
+
 ## Overview
 
 This project aims to develop an RL (Reinforcement Learning) agent that efficiently plays a Tower Defense game. The primary objective is to design a system where the agent defends the territory by strategically managing towers along enemy paths. If time permits, additional attacking capabilities may be integrated.
@@ -31,6 +34,20 @@ This project aims to develop an RL (Reinforcement Learning) agent that efficient
     2. **RL Agent Development:** Create a deep learning-based model to control tower placements and defense actions.
     3. **Strategy Optimization:** Integrate genetic algorithms to improve the agent’s strategies iteratively.
     4. **Integration:** Combine all components into an end-to-end workflow with a simple UI.
+
+## UI Evolution
+
+### Version 1 – Basic Layout
+![UI v1](/assets/v1.png)  
+*Simple `25×10`  grid-based board with basic tower/enemy placing using colored cells.*
+
+### Version 2 – Enhanced Visuals & Logic
+![UI v2](/assets/v2.gif)  
+*Introduced sprites, improved health bar logic, and better enemy animations. Grid size is `7×7`*
+
+### Version 3 – RL Integration + Game Polish
+![UI v3](/assets/v3.gif)  
+*Full integration of RL agent logic, cursor dynamics during waves, tower range animations, and overall polish.*
 
 ## Project Roadmap
 
@@ -69,4 +86,3 @@ This project aims to develop an RL (Reinforcement Learning) agent that efficient
 - Watchtower Level 2 and Level 3 sprites generated with the assistance of ChatGPT (March 2025 version) by OpenAI  
   - Source: Generated via prompt-based image assistance in ChatGPT  
   - License: Used with permission under OpenAI’s terms for generated content
-
