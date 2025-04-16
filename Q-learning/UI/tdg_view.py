@@ -1,5 +1,4 @@
 import pygame
-import sys
 import time
 from tdg_controller import GameController
 
@@ -157,7 +156,6 @@ def draw_game_over():
         screen.blit(text, text_rect)
 
 def process_key(event):
-    # print("[DEBUG] process_key called with event:", event)  # Debug print
     if game.get_game_data()["game_over"]:
         return
 
@@ -228,9 +226,5 @@ while running:
 
             game.env.step(action_to_do)
 
-            # if game.env.wave_ready and not game.env.game_started:
-            #     game.env.step('START_WAVE')
-
     refresh()
     clock.tick(5)  # Maintain 10 FPS
-

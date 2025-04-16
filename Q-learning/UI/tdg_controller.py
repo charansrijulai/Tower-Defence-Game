@@ -10,7 +10,6 @@ class GameController:
         self.algo_used = algo
         self.env = TowerDefenseEnv()
 
-        # self.dqn_model = None
         if algo == 'dqn':
             action_space = self.env.action_space.n
             model = QNetwork(3, action_space)
@@ -25,7 +24,6 @@ class GameController:
         if algo == 'ql':
             try:
                 with open('../train/Q_table_winning_train_a_lot.pickle', 'rb') as f:
-                # with open('../train/Q_table.pickle', 'rb') as f:
                     self.q_table = pickle.load(f)
                 print("Loaded trained Q table successfully!")
             except Exception as e:
@@ -63,26 +61,10 @@ class GameController:
     def q_learning_step(self):
         if self.algo_used == 'dqn':
             return self.dqn_step()
-        # print('check')
-        # state = self.encode_state()
-        # action = self.choose_action(state)
-        # Print the chosen action (as index) and grid coordinates:
-        # row = action // self.env.cols
-        # col = action % self.env.cols
-        # print(f"[DEBUG] Agent chose action index {action} which corresponds to grid cell ({row}, {col})")
         obs = self.env.get_observation()
         state = self.hash(obs)
-        # print(state)
         action = np.argmax(self.q_table[state])
 
-        # reward = self.perform_action(action)
-        # next_state = self.encode_state()
-        # best_next_action = np.argmax(self.q_table[next_state])
-        # td_target = reward + self.gamma * self.q_table[next_state][best_next_action]
-        # td_error = td_target - self.q_table[state][action]
-        # self.q_table[state][action] += self.alpha * td_error
-
-        # return state, action, reward, next_state, best_next_action
         return action
     
     def dqn_step(self):

@@ -1,6 +1,5 @@
 import pygame
 import sys
-import time
 from tdg_controller import GameController
 
 # Setup

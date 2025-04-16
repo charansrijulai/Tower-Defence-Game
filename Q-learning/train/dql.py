@@ -1,10 +1,7 @@
 import pickle
 import numpy as np
-# from tdg_viz_int import *
 from test_gym_train import TowerDefenseEnv
 
-# gui_flag = True # Set to True to enable the game state visualization
-# setup(GUI=gui_flag)
 env = TowerDefenseEnv()
 def hash(obs):
     x, y = obs['current_position']
@@ -28,24 +25,18 @@ def Q_learning(num_episodes=10000, gamma=0.9, epsilon=1, decay_rate=0.999):
 			print("epsiode number ",episode)
 			print(temp_dict)
 		obs, reward, done, info = env.reset()
-		# print(obs, reward, done, info)
 		state = hash(obs)
 		while not done:
 			if np.random.rand() < epsilon:
 				action = env.action_space.sample()
 			else:
 				action = np.argmax(Q_table[state])
-			# print(action)
 			eta = 1/(1 + no_of_updates[state][action])
 			next_obs, reward, done, info = env.step(action)
-			# print(next_obs, reward, done, info)
-			# print(env.current_wave)
 			next_state = hash(next_obs)
 			Q_table[state][action] = ((1 - eta) * Q_table[state][action] + eta * (reward + (gamma * np.max(Q_table[next_state]))))
 			no_of_updates[state][action] += 1
 			state = next_state
-			# if gui_flag:
-			# 	refresh(next_obs, reward, done, info)
 		temp_dict[env.current_wave] += 1
 		epsilon *= decay_rate
 	return Q_table

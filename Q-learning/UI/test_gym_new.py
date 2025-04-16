@@ -9,10 +9,9 @@ class TowerDefenseEnv(gym.Env):
 
     def __init__(self):
         super(TowerDefenseEnv, self).__init__()
-        # self.rows, self.cols = 7, 15
         self.rows, self.cols = 7, 7
         self.path_row = 3
-        self.max_waves = 5 # Increased max waves for multiple waves.
+        self.max_waves = 5
         self.current_wave = 1
         self.available_towers = [1]
         self.selected_tower = 1
@@ -22,23 +21,18 @@ class TowerDefenseEnv(gym.Env):
         self.enemy_count = 0
         self.game_started = False
         self.game_over = False
-        self.allow_tower_placement = True  # Initialized here.
-        self.towers = {}  # Towers are stored as a dictionary with keys (row, col)
+        self.allow_tower_placement = True
+        self.towers = {}
         self.enemies = []
 
         self.tower_info = {
-            # 1: {'color': (0, 255, 0), 'health': 20, 'damage': 2, 'range': 2, 'cost': 15},
             1: {'color': (0, 255, 0), 'health': 20, 'damage': 10, 'range': 2, 'cost': 15},
-            # 2: {'color': (0, 0, 255), 'health': 30, 'damage': 3, 'range': 3, 'cost': 20},
             2: {'color': (0, 0, 255), 'health': 25, 'damage': 15, 'range': 3, 'cost': 20},
-            # 3: {'color': (255, 255, 0), 'health': 40, 'damage': 4, 'range': 4, 'cost': 25}
             3: {'color': (255, 255, 0), 'health': 30, 'damage': 20, 'range': 3, 'cost': 25}
         }
 
         self.enemy_info = {
-            # 0: {'color': (0, 128, 128), 'health': 10, 'damage': 1, 'range': 1},
             0: {'color': (0, 128, 128), 'health': 10, 'damage': 10, 'range': 1},
-            # 1: {'color': (128, 0, 0), 'health': 20, 'damage': 2, 'range': 2}
             1: {'color': (128, 0, 0), 'health': 20, 'damage': 13, 'range': 2}
         }
 
@@ -46,29 +40,26 @@ class TowerDefenseEnv(gym.Env):
             'tower_placed_success': 10,
             'tower_placed_fail': -10,
             'wave_won': 1000,
-            # 'wave_lost': -1000,
             'wave_lost': -5000,
             'game_won': 5000,
         }
 
-        # self.actions = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'SWITCH_TOWER', 'PLACE_TOWER', 'START_WAVE']
         self.actions = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'PLACE_TOWER', 'START_WAVE']
         self.action_space = spaces.Discrete(len(self.actions))
 
         self.observation_space = spaces.Dict({
             'current_position': spaces.Tuple((spaces.Discrete(self.rows), spaces.Discrete(self.cols))),
-            # 'current_selected_tower': spaces.Discrete(len(self.tower_info))
             'current_selected_tower': spaces.Discrete(len(self.tower_info) + 1)
         })
 
         self.reset()
 
     def reset(self):
-        self.towers = {}  # Towers are stored as a dictionary with keys (row, col)
+        self.towers = {}
         self.enemies = []
         self.selected_tower = 1
         # self.player_pos = [0, 0]
-        self.player_pos = [random.randint(0, self.rows - 1), random.randint(0, self.cols - 1)] # CHANGE HERE
+        self.player_pos = [random.randint(0, self.rows - 1), random.randint(0, self.cols - 1)]
         self.current_wave = 1
         self.wave_ready = False
         self.enemy_count = 0
@@ -111,14 +102,10 @@ class TowerDefenseEnv(gym.Env):
         info = {'result': result, 'action': action_name}
         done = False
         terminal_state = self.is_terminal()
-        # if action_name == 'START_WAVE':
-            # print(terminal_state)
         if terminal_state == 'game_won':
             done = True
-            # reward += self.rewards['wave_won']
         elif terminal_state == 'game_over':
             done = True
-            # reward += self.rewards['wave_lost']
         else:
             done = False
 
@@ -157,27 +144,22 @@ class TowerDefenseEnv(gym.Env):
             self.player_pos = random.choice(adjacent_positions)
 
     def place_tower(self):
-        # print("[ENV DEBUG] place_tower called. Player position:", self.player_pos, "Coins:", self.coins)
         if np.random.rand() < 0.5 and self.current_wave > 1:
             self.switch_tower()
         pos = tuple(self.player_pos)
         if pos in self.towers:
             self.move_cursor_to_random_adjacent()
-            # print("[ENV DEBUG] Tower already placed at:", pos)
             return "Tower already placed here, moved to adjacent cell!", 0
         if pos[0] == self.path_row:
             self.move_cursor_to_random_adjacent()
-            # print("[ENV DEBUG] Cannot place on enemy path at:", pos)
             return "Cannot place on enemy path, moved to adjacent cell!", 0
         cost = self.tower_info[self.selected_tower]['cost']
         if self.coins < cost:
-            # print("[ENV DEBUG] Not enough coins to place tower. Coins:", self.coins, "Cost:", cost)
             return self.start_wave()  # This automatically starts the wave if coins are insufficient!
         self.wave_ready = True
         self.coins -= cost
         self.towers[pos] = {'type': self.selected_tower, 'health': self.tower_info[self.selected_tower]['health']}
         self.move_cursor_to_random_adjacent()
-        # print("[ENV DEBUG] Tower placed at:", pos)
         return "Tower placed and moved to adjacent cell!", self.rewards['tower_placed_success']
 
     def start_wave(self):
@@ -192,17 +174,6 @@ class TowerDefenseEnv(gym.Env):
 
     def spawn_enemies(self):
         """Generates enemies based on the current wave number."""
-        # num_enemies = self.current_wave * 2
-        # self.enemy_count = num_enemies
-        # self.enemies = []
-        # for _ in range(num_enemies):
-        #     enemy_type = random.choice(list(self.enemy_info.keys()))
-        #     enemy = {
-        #         'type': enemy_type,
-        #         'health': 10 + self.current_wave * 2,
-        #         'x': self.cols  # Starting at the rightmost column.
-        #     }
-        #     self.enemies.append(enemy)
         self.update_enemies()
         return "Enemies spawned!"
 
@@ -300,24 +271,13 @@ class TowerDefenseEnv(gym.Env):
     def end_wave(self, won):
         """Handles the end of a wave, unlocking new towers and progressing to the next wave."""
         if won:
-            # self.coins += 50
-            # self.current_wave += 1
             if self.current_wave == 2:
                 self.available_towers.append(2)
             if self.current_wave == 3:
                 self.available_towers.append(3)
-        #     if self.current_wave > self.max_waves:
-        #         self.game_over = True
-        #         return "Game Won!", self.rewards['wave_won']
-        #     return "Wave won! Next wave starts soon.", self.rewards['wave_won']
-        # else:
-        #     self.game_over = True
-        #     return "Game Over! You lost.", self.rewards['wave_lost']
     def play_turn(self, action):
         if action in ['UP', 'DOWN', 'LEFT', 'RIGHT']:
             return self.move_cursor(action)
-        # elif action == 'SWITCH_TOWER':
-        #     return self.switch_tower()
         elif action == 'PLACE_TOWER':
             return self.place_tower()
         elif action == 'START_WAVE':
