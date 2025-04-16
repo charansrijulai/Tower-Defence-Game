@@ -73,9 +73,9 @@ game = GameController(algo='dqn')
 ```
 - Finally set the correct path to the saved parameters file of the agent being used inside the **tdg_controller.py**:
 ```
-# For the DQN agent, put the correct path of the params file present inside the train folder, inside line 17 of tdg_controller.py
+# For the DQN agent, put the correct path of the params file present inside the train folder, inside line 16 of tdg_controller.py
 model.load_state_dict(torch.load(<DQN_PARAMS_PATH>))
-# For the Q-learning agent, put the correct path of the params file present inside the train folder, inside line 27 of tdg_controller.py
+# For the Q-learning agent, put the correct path of the params file present inside the train folder, inside line 26 of tdg_controller.py
 with open(<Q_LEARNING_PARAMS_PATH>, 'rb') as f:
 ```
 - Finally run either **tdg_view.py** or **tdg_view_animated.py** as needed

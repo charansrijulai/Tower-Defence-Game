@@ -5,12 +5,10 @@ import numpy as np
 import random
 from collections import deque
 from test_gym_train import TowerDefenseEnv
-import time
 
 # Hyperparameters
 gamma = 0.9
 epsilon = 1.0
-# epsilon_decay = 0.999
 epsilon_decay = 0.9999932
 min_epsilon = 0.1
 batch_size = 64
@@ -19,11 +17,11 @@ num_episodes = 10000
 target_update_freq = 500  # Frequency of target network update
 max_memory = 10000  # Max size of experience replay buffer
 
-# Build the Neural Network for Q-value approximation
+# Neural Network for Q-value approximation
 class QNetwork(nn.Module):
     def __init__(self, observation_space, action_space, internal_nodes=128):
         super(QNetwork, self).__init__()
-        self.dense1 = nn.Linear(observation_space, internal_nodes)  # Input size is 3 (x, y, tower) for the state
+        self.dense1 = nn.Linear(observation_space, internal_nodes)  # Input size is 3 (current_x, current_y, selected_tower) for the state
         self.dense2 = nn.Linear(internal_nodes, internal_nodes)
         self.q_values = nn.Linear(internal_nodes, action_space)
 
@@ -51,14 +49,8 @@ def train_step(model, target_model, batch, optimizer):
     global gamma
 
     states, actions, rewards, next_states, dones = zip(*batch)
-    # print(type(states))
-    # print(type(actions))
-    # print(type(rewards))
-    # print(type(next_states))
-    # print(type(dones))
 
     states = torch.tensor(np.array(states), dtype=torch.float32)
-    # actions = torch.tensor(actions, dtype=torch.float32)
     actions = torch.tensor(actions, dtype=torch.int64)
     rewards = torch.tensor(rewards, dtype=torch.float32)
     next_states = torch.tensor(np.array(next_states), dtype=torch.float32)
@@ -69,7 +61,6 @@ def train_step(model, target_model, batch, optimizer):
     next_q_values = target_model(next_states)
 
     # Get the Q-values for the taken actions
-    # action_indices = torch.tensor(actions)
     action_indices = actions
     q_values_taken = q_values.gather(1, action_indices.unsqueeze(1))
 
@@ -78,7 +69,6 @@ def train_step(model, target_model, batch, optimizer):
         max_next_q_values = next_q_values.max(1)[0]
         target_q_values = rewards + gamma * (1 - dones) * max_next_q_values
 
-    # Loss (Mean Squared Error)
     loss = nn.MSELoss()(q_values_taken.squeeze(), target_q_values)
 
     # Update the model
@@ -128,14 +118,10 @@ def dqn():
     total_rewards = []
 
     for episode in range(num_episodes):
-        # print(f"Episode {episode} - START")
         if episode % 100 == 0:
             print(f"Episode {episode} - DONE")
         obs, reward, done, info = env.reset()
-        # print(type(obs['current_position']))
-        # print(type([obs['current_selected_tower']]))
         state = np.array([obs['current_position'][0], obs['current_position'][1], obs['current_selected_tower']])
-        # state = np.array(obs['current_position'] + tuple([obs['current_selected_tower']]))
         state = torch.tensor(state, dtype=torch.float32)
         total_reward = 0
 
@@ -174,10 +160,6 @@ def dqn():
         if episode % target_update_freq == 0:
             target_model.load_state_dict(model.state_dict())
 
-        # # Print progress every 5000 episodes
-        # if episode % 5000 == 0:
-        #     print(f"Episode {episode}, Total Reward: {total_reward}")
-
     return model
 
 # Testing the trained model
@@ -190,7 +172,6 @@ def test_model():
     model.load_state_dict(torch.load('dqn_tower_defense_model.pth'))
     model.eval()
 
-    # state = np.array(obs['current_position'] + [obs['current_selected_tower']])
     state = np.array([obs['current_position'][0], obs['current_position'][1], obs['current_selected_tower']])
     state = torch.tensor(state, dtype=torch.float32)
     total_reward = 0

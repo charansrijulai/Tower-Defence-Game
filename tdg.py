@@ -115,16 +115,9 @@ def handle_input(event):
         elif event.key == pygame.K_d and player_pos[0] < cols - 1:
             player_pos[0] += 1
         elif event.key == pygame.K_p and selected_tower and tuple(player_pos) not in towers and player_pos[1] != path_row and allow_tower_placement:
-            # towers[tuple(player_pos)] = tower_info[selected_tower - 1]['color']
-            # towers[tuple(player_pos)] = selected_tower - 1
             cost = tower_info[selected_tower - 1]['cost']
             if coins >= cost:
                 coins -= cost
-                # towers[tuple(player_pos)] = {
-                #     'color': tower_info[selected_tower - 1]['color'],
-                #     'damage': tower_info[selected_tower - 1]['damage'],
-                #     'health': 100  # starting health for the tower
-                # }
                 towers[tuple(player_pos)] = {'type': selected_tower - 1, 'health': tower_info[selected_tower - 1]['health']}
             else:
                 print("Not enough coins to purchase this tower")
@@ -152,7 +145,6 @@ def update_enemies():
         resolve_combat()
         for enemy in enemies:
             enemy['x'] -= 1
-        # enemies.append({'x': cols, 'color': enemy_info[enemy_type - 1]['color'], 'health': enemy_info[enemy_type - 1]['health']})
         enemies.append({'x': cols, 'type': enemy_type - 1, 'health': enemy_info[enemy_type - 1]['health'], 'color': enemy_info[enemy_type - 1]['color']})
         enemy_count += 1
 
@@ -170,16 +162,13 @@ def update_enemies():
             enemy['x'] -= 1
         last_move_time = current_time  # Update last move time
 
-    # **Call combat function to resolve battles**
-    # resolve_combat()
-
     # Remove dead enemies
     enemies[:] = [enemy for enemy in enemies if enemy['health'] > 0]
 
     if enemy_count >= max_enemies and len(enemies) == 0:
         wave_number += 1
         enemy_count = 0
-        max_enemies = 10 + (wave_number - 1) * 5 #10, 15, 20, 25, 30, 35 ......
+        max_enemies = 10 + (wave_number - 1) * 5
         coins += wave_number * 20
         allow_tower_placement = True
         game_started = False
@@ -192,25 +181,17 @@ def resolve_combat():
     towers_to_remove = []
 
     for (tower_x, tower_y), info in towers.items():
-        # tower_type = next((key for key, info in tower_info.items() if info['color'] == tower_color), None)
         tower_type = info['type']
         tower_range = tower_info[tower_type]['range']
         tower_damage = tower_info[tower_type]['damage']
         tower_health = tower_info[tower_type]['health']
-        # tower_range = tower['range']
-        # tower_damage = tower['damage']
-        # tower['health'] = tower.get('health', tower_info[tower['type']]['health'])  # Ensure health is tracked
 
         for enemy in enemies:
             enemy_x, enemy_y = enemy['x'], path_row
 
-            # **Ensure enemy has health stored in its dictionary**
-            # enemy['health'] = enemy.get('health', enemy_info[enemy['type']]['health'])
-            # enemy['health'] = enemy.get('health')
-            # enemy_type = next((key for key, info in enemy_info.items() if info['color'] == enemy['color']), None)
             enemy_type = enemy['type']
 
-            # **Calculate Manhattan distance**
+            # Calculate Manhattan distance
             distance = abs(tower_x - enemy_x) + abs(tower_y - enemy_y)
 
             # Tower attacks enemy
@@ -225,10 +206,10 @@ def resolve_combat():
                 if info['health'] <= 0:
                     towers_to_remove.append((tower_x, tower_y))  # Mark tower for removal
 
-    # **Remove dead enemies**
+    # Remove dead enemies
     enemies = [enemy for enemy in enemies if enemy not in enemies_to_remove]
 
-    # **Remove destroyed towers**
+    # Remove destroyed towers
     for tower in towers_to_remove:
         if tower in towers:
             del towers[tower]
